@@ -1,0 +1,5 @@
+#+TITLE: Readme
+
+future reading
+https://hadean.com/blog/managing-rust-dependencies-with-nix-part-i/
+https://caballerocoll.com/blog/bevy-rhythm-game/ i rly wanted to use this ; _ ;
