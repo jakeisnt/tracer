@@ -1,3 +1,6 @@
+mod vec;
+use vec::{Color};
+
 fn main() {
     const IMGW: u64 = 256;
     const IMGH: u64 = 256;
@@ -7,16 +10,15 @@ fn main() {
     println!("255"); // TODO ??
 
     for j in 0..IMGH {
+        eprintln!("Scanlines remaining: {}", IMGH - j - 1); // print to stderr
         for i in 0..IMGW {
-            let r = i/(IMGW - 1);
-            let g = j/(IMGW - 1);
-            let b = 0.25 as u64;
+            let pixel_color =
+                Color::new((i as f64) / ((IMGW - 1) as f64),
+                           (j as f64) / ((IMGH - 1) as f64),
+                           0.25);
 
-            let ir = (255.999 as u64) * r;
-            let ig = (255.999 as u64) * g;
-            let ib = (255.999 as u64) * b;
-
-            println!("{} {} {}", ir, ig, ib);
+            println!("{}", pixel_color.format_color());
         }
     }
+    eprintln!("Done.");
 }
