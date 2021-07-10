@@ -31,7 +31,7 @@ impl Vec3 {
     }
 
     pub fn dot(self, other: Vec3) -> f64 {
-        self[0] * other[0] + self[1] * other[1] + self[2] * other[2]
+        self.x() * other.x() + self.y() * other.y() + self.z() * other.z()
     }
 
     pub fn length(self) -> f64 {
@@ -41,9 +41,9 @@ impl Vec3 {
     pub fn cross(self, other: Vec3) -> Vec3 {
         Vec3 {
             e: [
-            self[1] * other[2] - self[2] * other[1],
-            self[2] * other[0] - self[0] * other[2],
-            self[0] * other[1] - self[1] * other[0]
+            self.y() * other.z() - self.z() * other.y(),
+            self.z() * other.x() - self.x() * other.z(),
+            self.x() * other.y() - self.y() * other.x()
             ]
         }
     }
@@ -78,7 +78,7 @@ impl Add for Vec3 {
 
     fn add(self, other: Vec3) -> Vec3 {
         Vec3 {
-            e: [self[0] + other[0], self[1] + other[1], self[2] + other[2]]
+            e: [self.x() + other.x(), self.y() + other.y(), self.z() + other.z()]
         }
     }
 }
@@ -86,7 +86,7 @@ impl Add for Vec3 {
 impl AddAssign for Vec3 {
     fn add_assign(&mut self, other: Vec3) {
         *self = Vec3 {
-            e: [self[0] + other[0], self[1] + other[1], self[2] + other[2]]
+            e: [self.x() + other.x(), self.y() + other.y(), self.z() + other.z()]
         }
     }
 }
@@ -96,7 +96,7 @@ impl Sub for Vec3 {
 
     fn sub(self, other: Vec3) -> Vec3 {
         Vec3 {
-            e: [self[0] - other[0], self[1] - other[1], self[2] - other[2]]
+            e: [self.x() - other.x(), self.y() - other.y(), self.z() - other.z()]
         }
     }
 }
@@ -104,7 +104,7 @@ impl Sub for Vec3 {
 impl SubAssign for Vec3 {
     fn sub_assign(&mut self, other: Vec3) {
         *self = Vec3 {
-            e: [self[0] - other[0], self[1] - other[1], self[2] - other[2]]
+            e: [self.x() - other.x(), self.y() - other.y(), self.z() - other.z()]
         }
     }
 }
@@ -114,7 +114,7 @@ impl Mul<f64> for Vec3 {
 
     fn mul(self, other: f64) -> Vec3 {
         Vec3 {
-            e: [self[0] * other, self[1] * other, self[2] * other]
+            e: [self.x() * other, self.y() * other, self.z() * other]
         }
     }
 }
@@ -123,7 +123,7 @@ impl Mul<f64> for Vec3 {
 impl MulAssign<f64> for Vec3 {
     fn mul_assign(&mut self, other: f64) {
         *self = Vec3 {
-            e: [self[0] * other, self[1] * other, self[2] * other]
+            e: [self.x() * other, self.y() * other, self.z() * other]
         }
     }
 }
@@ -133,7 +133,7 @@ impl Mul<Vec3> for f64 {
 
     fn mul(self, other: Vec3) -> Vec3 {
         Vec3 {
-            e: [self * other[0], self * other[1], self * other[2]]
+            e: [self * other.x(), self * other.y(), self * other.z()]
         }
     }
 }
@@ -143,7 +143,7 @@ impl Div<f64> for Vec3 {
 
     fn div(self, other: f64) -> Vec3 {
         Vec3 {
-            e: [self[0] / other, self[1] / other, self[2] / other]
+            e: [self.x() / other, self.y() / other, self.z() / other]
         }
     }
 }
@@ -151,7 +151,7 @@ impl Div<f64> for Vec3 {
 impl DivAssign<f64> for Vec3 {
     fn div_assign(&mut self, other: f64) -> () {
         *self = Vec3 {
-            e: [self[0] / other, self[1] / other, self[2] / other]
+            e: [self.x() / other, self.y() / other, self.z() / other]
         };
     }
 }
