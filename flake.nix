@@ -30,6 +30,8 @@
             rustfmt
             cargo
             lld
+            netpbm
+            feh
           ];
         };
       });
