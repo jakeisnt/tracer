@@ -1,67 +1,66 @@
 mod vec;
 mod ray;
+mod hit;
+mod sphere;
+mod camera;
+
 use vec::{Vec3, Point3, Color};
 use ray::Ray;
+use hit::{Hit, World};
+use sphere::Sphere;
+use camera::Camera;
+use rand::Rng;
 
-fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> f64 {
-    let oc = r.origin() - center;
-    let a = r.direction().length().powi(2);
-    let half_b = oc.dot(r.direction());
-    let c = oc.length().powi(2) - radius * radius;
-    let discriminant = half_b * half_b - a * c;
-
-    if discriminant < 0.0 {
-        -1.0
+fn ray_color(r: &Ray, world: &World) -> Color {
+    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
+        0.5 * (rec.normal + Color::new(1.0, 1.0, 1.0))
     } else {
-        (-half_b - discriminant.sqrt()) / a
+        let unit_direction = r.direction().normalized();
+        let t = 0.5 * (unit_direction.y() + 1.0);
+        (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
     }
 }
 
-fn ray_color(r: &Ray) -> Color {
-    let t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, r);
+fn main() -> () {
+    // Image
+    const ASPECT_RATIO: f64 = 16.0 / 9.0;
+    const IMAGE_WIDTH: u64 = 256;
+    const IMAGE_HEIGHT: u64 = ((IMAGE_WIDTH as f64) / ASPECT_RATIO) as u64;
+    const SAMPLES_PER_PIXEL: u64 = 100;
 
-    if t > 0.0 {
-        let n = (r.at(t) - Vec3::new(0.0, 0.0, -1.0)).normalized();
-        return 0.5 * Color::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0);
-    }
+    // World
+    let mut world = World::new();
+    world.push(Box::new(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5)));
+    world.push(Box::new(Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0)));
 
-    let unit_dir = r.direction().normalized();
-    let t = 0.5 * (unit_dir.y() + 1.0);
-    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
-}
-
-fn main() {
-    // image configuration
-    const ASPECT: f64 = 16.0 / 9.0;
-    const IMGW: u64 = 256;
-    const IMGH: u64 = ((IMGW as f64) / ASPECT) as u64;
-
-    // camera configuration
-    let port_h = 2.0;
-    let port_w = ASPECT * port_h;
-    let focal_len = 1.0;
-
-    let origin = Point3::new(0.0, 0.0, 0.0);
-    let horizontal = Vec3::new(port_w, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, port_h, 0.0);
-    let low_left_corner = origin - horizontal / 2.0 - vertical / 2.0 - Vec3::new(0.0, 0.0, focal_len);
+    // Camera
+    let cam = Camera::new();
 
     println!("P3");
-    println!("{} {}", IMGW, IMGH);
+    println!("{} {}", IMAGE_WIDTH, IMAGE_HEIGHT);
     println!("255");
 
-    for j in 0..IMGH {
-        eprintln!("Scanlines remaining: {}", IMGH - j - 1); // print to stderr
+    let mut rng = rand::thread_rng();
+    for j in 0..IMAGE_HEIGHT {
+        eprintln!("Scanlines remaining: {}", IMAGE_HEIGHT - j - 1);
 
-        for i in 0..IMGW {
-            let u = (i as f64) / ((IMGW - 1) as f64);
-            let v = (j as f64) / ((IMGH - 1) as f64);
+        for i in 0..IMAGE_WIDTH {
+            let mut pixel_color = Color::new(0.0, 0.0, 0.0);
 
-            let r = Ray::new(origin, low_left_corner + u * horizontal + v * vertical - origin);
-            let pixel_color = ray_color(&r);
+            for _ in 0..SAMPLES_PER_PIXEL {
+                let random_u: f64 = rng.gen();
+                let random_v: f64 = rng.gen();
 
-            println!("{}", pixel_color.format_color());
+                let u = ((i as f64) + random_u) / ((IMAGE_WIDTH - 1) as f64);
+                let v = ((j as f64) + random_v) / ((IMAGE_HEIGHT - 1) as f64);
+
+                let r = cam.get_ray(u, v);
+                pixel_color += ray_color(&r, &world);
+            }
+
+            println!("{}", pixel_color.format_color(SAMPLES_PER_PIXEL));
         }
     }
+
     eprintln!("Done.");
 }
