@@ -16,9 +16,14 @@ fn ray_color(r: &Ray, world: &World, depth: u64) -> Color {
         return Color::new(0.0, 0.0, 0.0);
     }
 
-    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
+    // tolerance is greater than 0 to prevent 'shadow acne' - fp approximations of the sphere
+    // intersector that don't precisely reflect
+    if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         // add rya and normal to the random unit vector (the light)
-        let target = rec.p + rec.normal + Vec3::random_in_unit_sphere();
+        //
+        // // normalize: raise distribution prob. for scattering cliose to norm
+        // without it, distribution follows cos**3(given curvature of sphere) but norm is just cos.
+        let target = rec.p + rec.normal + Vec3::random_in_unit_sphere().normalized();
         // create ray with og center and dir randomized by unit vector!
         let r = Ray::new(rec.p, target - rec.p);
         // hope the ray we just created will hit something: use depth to limit stack overflow
