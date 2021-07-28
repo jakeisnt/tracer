@@ -80,6 +80,17 @@ impl Vec3 {
             }
         }
     }
+
+    // to prevent unit vector opposite normal from summing to zero, we need to avoid near zeroes
+    pub fn near_zero(self) -> bool {
+        const EPS: f64 = 1.0e-8;
+        self[0].abs() < EPS && self[1].abs() < EPS && self[2].abs() < EPS
+    }
+
+    pub fn reflect(self, n: Vec3) -> Vec3 {
+        // dir is v + 2(normal) * magnitude n (unit vector)
+        self - 2.0 * self.dot(n) * n
+    }
 }
 
 impl Index<usize> for Vec3 {
@@ -138,6 +149,17 @@ impl Mul<f64> for Vec3 {
     fn mul(self, other: f64) -> Vec3 {
         Vec3 {
             e: [self.x() * other, self.y() * other, self.z() * other]
+        }
+    }
+}
+
+
+impl Mul<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, other: Vec3) -> Vec3 {
+        Vec3 {
+            e: [self.x() * other.x(), self.y() * other.y(), self.z() * other.z()]
         }
     }
 }
