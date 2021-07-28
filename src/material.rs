@@ -34,13 +34,15 @@ impl Scatter for Lambertian {
 }
 
 pub struct Metal {
-    albedo: Color
+    albedo: Color,
+    fuzz: f64
 }
 
 impl Metal {
-    pub fn new(a: Color) -> Metal {
+    pub fn new(a: Color, f: f64) -> Metal {
         Metal {
-            albedo: a
+            albedo: a,
+            fuzz: f // semirandom reflection
         }
     }
 }
@@ -50,7 +52,8 @@ impl Scatter for Metal {
         // reflect off of the normal, then make unit vector
         let reflected = r_in.direction().reflect(rec.normal).normalized();
         // prod ray in dir of collision
-        let scattered = Ray::new(rec.p, reflected);
+        // use fuzz to obscure reflective direction
+        let scattered = Ray::new(rec.p, reflected + self.fuzz * Vec3::random_in_unit_sphere());
 
         if scattered.direction().dot(rec.normal) > 0.0 {
             Some((self.albedo, scattered))
