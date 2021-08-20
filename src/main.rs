@@ -11,7 +11,7 @@ use hit::{Hit, World};
 use sphere::Sphere;
 use camera::Camera;
 use rand::Rng;
-use material::{Lambertian, Metal};
+use material::{Lambertian, Metal, Dielectric};
 use std::rc::Rc;
 
 fn ray_color(r: &Ray, world: &World, depth: u64) -> Color {
@@ -48,8 +48,8 @@ fn main() -> () {
     let mut world = World::new();
 
     let mat_ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
-    let mat_center = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
-    let mat_left = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
+    let mat_center = Rc::new(Dielectric::new(1.5));
+    let mat_left = Rc::new(Dielectric::new(1.5));
     let mat_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.0));
 
     let sphere_ground = Sphere::new(Point3::new(0.0, -100.5, -1.0), 100.0, mat_ground);
