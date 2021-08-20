@@ -6,3 +6,5 @@ https://caballerocoll.com/blog/bevy-rhythm-game/ i rly wanted to use this ; _ ;
 
 
 decent impl reference?: https://github.com/browserdotsys/vecchio
+
+https://misterdanb.github.io/raytracinginrust/#wherenext? : sauce for most of the implementation

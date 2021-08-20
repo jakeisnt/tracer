@@ -3,7 +3,7 @@ use super::ray::Ray;
 use super::hit::HitRecord;
 use rand::Rng;
 
-pub trait Scatter {
+pub trait Scatter : Send + Sync {
     // potentially rcattur the ray
     fn scatter(&self, r_in: &Ray, rec: &HitRecord) -> Option<(Color, Ray)>;
 }
