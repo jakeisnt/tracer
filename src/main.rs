@@ -5,7 +5,7 @@ mod sphere;
 mod camera;
 mod material;
 
-use vec::{Vec3, Point3, Color};
+use vec::{Point3, Color};
 use ray::Ray;
 use hit::{Hit, World};
 use sphere::Sphere;
@@ -46,7 +46,6 @@ fn main() -> () {
 
     // World
     let mut world = World::new();
-
 
     let mat_ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.0)));
     let mat_center = Rc::new(Lambertian::new(Color::new(0.7, 0.3, 0.3)));
